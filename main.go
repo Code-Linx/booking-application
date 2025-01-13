@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"go-booking-app/helper"
-	"strconv"
+	"time"
 )
 
 var conferenceName string = "Go Conference"
@@ -16,7 +16,14 @@ var remainTicket uint = 50
 // var bookings [50]string
 // slice
 // var bookings []string
-var bookings = make([]map[string]string, 0)
+var bookings = make([]UserData, 0)
+
+type UserData struct {
+	firstName       string
+	lastName        string
+	email           string
+	NumbersOfTicket uint
+}
 
 func main() {
 
@@ -29,6 +36,7 @@ func main() {
 		isValidName, isValidEmail, isValidTicketNumber := helper.ValidateUserInputs(firstName, lastName, email, userTicket, remainTicket)
 		if isValidName && isValidEmail && isValidTicketNumber {
 			bookTickets(userTicket, firstName, lastName, email)
+			go sendTicket(userTicket, firstName, lastName, email)
 
 			firstNames := getFirstName()
 
@@ -55,7 +63,7 @@ func main() {
 
 	}
 
-	city := "London"
+	/* city := "London"
 	switch city {
 	case "New York":
 	case "Signapore", "HongKong":
@@ -63,7 +71,7 @@ func main() {
 	case "Mexico":
 	default:
 		fmt.Println("No Valid city selected")
-	}
+	} */
 }
 
 func greetUser() {
@@ -81,7 +89,7 @@ func getFirstName() []string {
 		firstNames = append(firstNames, firstName) */
 
 		//var names = strings.Fields(booking)
-		firstNames = append(firstNames, booking["firstName"])
+		firstNames = append(firstNames, booking.firstName)
 
 	}
 
@@ -112,11 +120,17 @@ func getUserInput() (string, string, string, uint) {
 func bookTickets(userTicket uint, firstName string, lastName string, email string) {
 	remainTicket = remainTicket - userTicket
 
-	var userData = make(map[string]string)
-	userData["firstName"] = firstName
+	var userData = UserData{
+		firstName:       firstName,
+		lastName:        lastName,
+		email:           email,
+		NumbersOfTicket: userTicket,
+	}
+
+	/* userData["firstName"] = firstName
 	userData["lastName"] = lastName
 	userData["email"] = email
-	userData["NumbersOfTicket"] = strconv.FormatUint(uint64(userTicket), 10)
+	userData["NumbersOfTicket"] = strconv.FormatUint(uint64(userTicket), 10) */
 	//bookings[0] = firstName + " " + lastName
 
 	bookings = append(bookings, userData)
@@ -136,6 +150,14 @@ func bookTickets(userTicket uint, firstName string, lastName string, email strin
 	fmt.Printf("%v tickets remaining for %v.\n", remainTicket, conferenceName)
 
 	fmt.Printf("These are all our booking : %v.\n", bookings)
+}
+
+func sendTicket(userTicket uint, firstName string, lastName string, email string) {
+	time.Sleep(10 * time.Second)
+	var ticket = fmt.Sprintf("%v tickets for %v %v.\n", userTicket, firstName, lastName)
+	println(("######################"))
+	fmt.Printf("Sending ticket :\n %v \nto email address  %v.\n", ticket, email)
+	println(("######################"))
 }
 
 /* func main() {
